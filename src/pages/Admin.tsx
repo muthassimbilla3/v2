@@ -12,7 +12,9 @@ export const Admin: React.FC = () => {
   const [proxies, setProxies] = useState<Proxy[]>([]);
   const [uploadHistory, setUploadHistory] = useState<UploadHistory[]>([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'users' | 'proxies' | 'upload'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'proxies' | 'upload'>(
+    user?.role === 'manager' ? 'proxies' : 'users'
+  );
   
   // User management states
   const [showUserModal, setShowUserModal] = useState(false);
@@ -31,6 +33,11 @@ export const Admin: React.FC = () => {
 
   useEffect(() => {
     if (user && (user.role === 'admin' || user.role === 'manager')) {
+      // Set default tab based on role
+      if (user.role === 'manager') {
+        setActiveTab('proxies');
+      }
+      
       if (user.role === 'admin') {
         fetchUsers();
       }
@@ -623,18 +630,6 @@ export const Admin: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Daily Limit
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={userForm.daily_limit}
-                onChange={(e) => setUserForm({ ...userForm, daily_limit: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div className="flex items-center">
               <input
                 type="checkbox"
                 id="is_active"
