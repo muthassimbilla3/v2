@@ -9,7 +9,6 @@ import * as XLSX from 'xlsx';
 export const Admin: React.FC = () => {
   const { user } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
-  const [proxies, setProxies] = useState<Proxy[]>([]);
   const [uploadHistory, setUploadHistory] = useState<UploadHistory[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'users' | 'proxies' | 'upload'>(
@@ -41,7 +40,6 @@ export const Admin: React.FC = () => {
       if (user.role === 'admin') {
         fetchUsers();
       }
-      fetchProxies();
       fetchUploadHistory();
     }
   }, [user]);
@@ -58,22 +56,6 @@ export const Admin: React.FC = () => {
     } catch (error) {
       console.error('Error fetching users:', error);
       toast.error('Error loading users');
-    }
-  };
-
-  const fetchProxies = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('proxies')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      if (error) throw error;
-      setProxies(data || []);
-    } catch (error) {
-      console.error('Error fetching proxies:', error);
-      toast.error('Error loading proxies');
     }
   };
 
@@ -207,7 +189,6 @@ export const Admin: React.FC = () => {
 
       toast.success(`${lines.length} proxies uploaded successfully`);
       setUploadFile(null);
-      fetchProxies();
       fetchUploadHistory();
     } catch (error: any) {
       console.error('Error uploading file:', error);
@@ -231,7 +212,6 @@ export const Admin: React.FC = () => {
 
       if (error) throw error;
       toast.success('All proxies deleted successfully');
-      fetchProxies();
     } catch (error) {
       console.error('Error clearing proxies:', error);
       toast.error('Error clearing proxies');
@@ -458,60 +438,6 @@ export const Admin: React.FC = () => {
               </div>
             </div>
 
-            {/* Proxy List */}
-            <div className="bg-white rounded-lg shadow-sm border">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Proxy List ({proxies.length} total)
-                </h2>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Proxy String
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Used By
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Created At
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {proxies.map((proxy) => (
-                      <tr key={proxy.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-mono text-gray-900 max-w-xs truncate">
-                            {proxy.proxy_string}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            proxy.is_used 
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-green-100 text-green-800'
-                          }`}>
-                            {proxy.is_used ? 'Used' : 'Available'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {proxy.used_by || '-'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(proxy.created_at).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
           </div>
         )}
 

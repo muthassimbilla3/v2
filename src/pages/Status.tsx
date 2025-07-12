@@ -172,6 +172,24 @@ export const Status: React.FC = () => {
     }
   };
 
+  const handleClearAllProxies = async () => {
+    if (!confirm('Are you sure you want to delete ALL proxies? This action cannot be undone.')) return;
+
+    try {
+      const { error } = await supabase
+        .from('proxies')
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
+
+      if (error) throw error;
+      toast.success('All proxies deleted successfully');
+      fetchSystemStats(); // Refresh stats
+    } catch (error) {
+      console.error('Error clearing proxies:', error);
+      toast.error('Error clearing proxies');
+    }
+  };
+
   if (!user || (user.role !== 'admin' && user.role !== 'manager')) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -338,6 +356,14 @@ export const Status: React.FC = () => {
                 )}
               </div>
             </div>
+            {user?.role === 'admin' && (
+              <button
+                onClick={handleClearAllProxies}
+                className="mt-2 bg-red-600 text-white px-3 py-1 text-xs rounded-md hover:bg-red-700 transition-colors"
+              >
+                Delete All IPs
+              </button>
+            )}
           </div>
         </div>
       </div>
