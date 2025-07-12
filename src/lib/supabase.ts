@@ -40,6 +40,5 @@ export type UploadHistory = {
   uploaded_by: string;
   file_name: string;
   proxy_count: number;
-  position: 'prepend' | 'append';
   created_at: string;
 };

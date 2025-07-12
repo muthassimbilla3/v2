@@ -49,13 +49,15 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </Link>
                   </>
                 )}
-                <Link
-                  to="/profile"
-                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-                >
-                  <User size={16} />
-                  <span>Profile</span>
-                </Link>
+                {user.role !== 'admin' && (
+                  <Link
+                    to="/profile"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                  >
+                    <User size={16} />
+                    <span>Profile</span>
+                  </Link>
+                )}
               </div>
             </div>
             <div className="flex items-center space-x-4">

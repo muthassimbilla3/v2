@@ -95,10 +95,14 @@ export const Status: React.FC = () => {
   const fetchUserUsages = async () => {
     try {
       // Fetch all users
-      const { data: users, error: usersError } = await supabase
-        .from('users')
-        .select('*')
-        .order('username');
+      let usersQuery = supabase.from('users').select('*').order('username');
+      
+      // If manager, exclude admin users
+      if (user?.role === 'manager') {
+        usersQuery = usersQuery.neq('role', 'admin');
+      }
+      
+      const { data: users, error: usersError } = await usersQuery;
 
       if (usersError) throw usersError;
 

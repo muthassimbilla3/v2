@@ -27,12 +27,13 @@ export const Admin: React.FC = () => {
 
   // Proxy upload states
   const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [uploadPosition, setUploadPosition] = useState<'prepend' | 'append'>('append');
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (user && (user.role === 'admin' || user.role === 'manager')) {
-      fetchUsers();
+      if (user.role === 'admin') {
+        fetchUsers();
+      }
       fetchProxies();
       fetchUploadHistory();
     }
@@ -179,15 +180,8 @@ export const Admin: React.FC = () => {
         return;
       }
 
-      // Insert proxies based on position
-      let insertData;
-      if (uploadPosition === 'prepend') {
-        // For prepend, we need to handle this differently
-        insertData = lines.map(line => ({ proxy_string: line.trim() }));
-      } else {
-        // For append, just insert normally
-        insertData = lines.map(line => ({ proxy_string: line.trim() }));
-      }
+      // Insert proxies
+      const insertData = lines.map(line => ({ proxy_string: line.trim() }));
 
       const { error } = await supabase
         .from('proxies')
@@ -201,8 +195,7 @@ export const Admin: React.FC = () => {
         .insert({
           uploaded_by: user?.id,
           file_name: uploadFile.name,
-          proxy_count: lines.length,
-          position: uploadPosition
+          proxy_count: lines.length
         });
 
       toast.success(`${lines.length} proxies uploaded successfully`);
@@ -278,17 +271,19 @@ export const Admin: React.FC = () => {
         {/* Tab Navigation */}
         <div className="border-b border-gray-200 mb-6">
           <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => setActiveTab('users')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'users'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <Users className="inline-block w-4 h-4 mr-2" />
-              Users
-            </button>
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'users'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <Users className="inline-block w-4 h-4 mr-2" />
+                Users
+              </button>
+            )}
             <button
               onClick={() => setActiveTab('proxies')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
@@ -315,7 +310,7 @@ export const Admin: React.FC = () => {
         </div>
 
         {/* Users Tab */}
-        {activeTab === 'users' && (
+        {activeTab === 'users' && user?.role === 'admin' && (
           <div className="bg-white rounded-lg shadow-sm border">
             <div className="p-6 border-b border-gray-200">
               <div className="flex justify-between items-center">
@@ -436,19 +431,6 @@ export const Admin: React.FC = () => {
                     onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
                     className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Upload Position
-                  </label>
-                  <select
-                    value={uploadPosition}
-                    onChange={(e) => setUploadPosition(e.target.value as 'prepend' | 'append')}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="append">Append (Add to end)</option>
-                    <option value="prepend">Prepend (Add to beginning)</option>
-                  </select>
                 </div>
                 <div className="flex space-x-3">
                   <button
