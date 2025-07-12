@@ -136,9 +136,6 @@ export const Profile: React.FC = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Today's Usage</p>
                 <p className="text-2xl font-bold text-gray-900">{todayUsage}</p>
-                <p className="text-xs text-gray-500">
-                  Limit: {user.daily_limit || 500}
-                </p>
               </div>
             </div>
           </div>

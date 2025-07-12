@@ -22,7 +22,6 @@ export const Admin: React.FC = () => {
     username: '',
     access_key: '',
     role: 'user' as 'admin' | 'manager' | 'user',
-    daily_limit: 500,
     is_active: true
   });
 
@@ -107,7 +106,6 @@ export const Admin: React.FC = () => {
         username: '',
         access_key: '',
         role: 'user',
-        daily_limit: 500,
         is_active: true
       });
       fetchUsers();
@@ -146,7 +144,6 @@ export const Admin: React.FC = () => {
       username: user.username,
       access_key: user.access_key,
       role: user.role,
-      daily_limit: user.daily_limit || 500,
       is_active: user.is_active
     });
     setShowUserModal(true);
@@ -183,7 +180,6 @@ export const Admin: React.FC = () => {
         .from('upload_history')
         .insert({
           uploaded_by: user?.id,
-          file_name: uploadFile.name,
           proxy_count: lines.length
         });
 
@@ -225,7 +221,6 @@ export const Admin: React.FC = () => {
         Username: user.username,
         'Access Key': user.access_key,
         Role: user.role,
-        'Daily Limit': user.daily_limit,
         'Is Active': user.is_active ? 'Yes' : 'No',
         'Created At': new Date(user.created_at).toLocaleDateString()
       }))
@@ -332,9 +327,6 @@ export const Admin: React.FC = () => {
                       Role
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Daily Limit
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -364,9 +356,6 @@ export const Admin: React.FC = () => {
                         }`}>
                           {user.role}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {user.daily_limit || 500}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${

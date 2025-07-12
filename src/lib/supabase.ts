@@ -14,7 +14,6 @@ export type User = {
   username: string;
   access_key: string;
   role: 'admin' | 'manager' | 'user';
-  daily_limit?: number;
   is_active: boolean;
   created_at: string;
 };
