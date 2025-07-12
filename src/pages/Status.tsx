@@ -245,6 +245,14 @@ export const Status: React.FC = () => {
                 <p className="text-xs text-gray-500">
                   {stats.totalProxies - stats.usedProxies} available
                 </p>
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={handleClearAllProxies}
+                    className="mt-2 bg-red-600 text-white px-3 py-1 text-xs rounded-md hover:bg-red-700 transition-colors"
+                  >
+                    Delete All IPs
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -356,14 +364,6 @@ export const Status: React.FC = () => {
                 )}
               </div>
             </div>
-            {user?.role === 'admin' && (
-              <button
-                onClick={handleClearAllProxies}
-                className="mt-2 bg-red-600 text-white px-3 py-1 text-xs rounded-md hover:bg-red-700 transition-colors"
-              >
-                Delete All IPs
-              </button>
-            )}
           </div>
         </div>
       </div>
